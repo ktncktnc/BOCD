@@ -1,5 +1,6 @@
 from source.utils import *
 from pandas import read_csv
+import os
 
 import torch
 from torch.utils.data import Dataset
@@ -34,7 +35,7 @@ class CDDataset(Dataset):
             fname = 'test.txt'
         
 #         print(path + fname)
-        self.names = read_csv(path + fname).columns
+        self.names = read_csv(os.path.join(path, fname)).columns
         self.n_imgs = self.names.shape[0]
         
         n_pix = 0
