@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import torch
 from skimage import io
 from scipy.ndimage import zoom
 
