@@ -5,7 +5,7 @@ import torch
 from torch.utils.data import Dataset
 
 
-class ChangeDetectionDataset(Dataset):
+class CDDataset(Dataset):
     """Change Detection dataset class, used for both training and test data."""
 
     def __init__(self, path, train = True, patch_side = 96, stride = None, use_all_bands = False, transform=None, img_type = 0, normalize = True):
