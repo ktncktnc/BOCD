@@ -80,7 +80,7 @@ class CDDataset(Dataset):
                                     [self.stride*(i + 1), self.stride*(j + 1)])
                     self.patch_coords.append(current_patch_coords)
                     
-        self.weights = [ FP_MODIFIER * 2 * true_pix / n_pix, 2 * (n_pix - true_pix) / n_pix]
+        self.weights = [2 * true_pix / n_pix, 2 * (n_pix - true_pix) / n_pix]
         
         
 
