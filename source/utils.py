@@ -94,7 +94,7 @@ def read_sentinel_img_leq60(path, NORMALISE_IMGS = True):
     swir3 = adjust_shape(zoom(io.imread(os.path.join(path_img_name, "B12.tif")),2),s)
     
     uv = adjust_shape(zoom(io.imread(os.path.join(path_img_name, "B01.tif")),6),s)
-    wv = adjust_shape(zoom(io.imread(os.path.join(path_img_name,"B09.tif"),6),s)
+    wv = adjust_shape(zoom(io.imread(os.path.join(path_img_name,"B09.tif")),6),s)
     swirc = adjust_shape(zoom(io.imread(os.path.join(path_img_name, "B10.tif")),6),s)
     
     I = np.stack((r,g,b,nir,ir1,ir2,ir3,nir2,swir2,swir3,uv,wv,swirc),axis=2).astype('float')
