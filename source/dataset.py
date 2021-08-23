@@ -6,16 +6,18 @@ from torch.utils.data import Dataset
 
 
 class CDDataset(Dataset):
-    """Change Detection dataset class, used for both training and test data."""
+    """
+    Change Detection dataset class, used for both training and test data.
+        
+    Args:
+        path (string): Path to the OSCD dataset directory
+        train (boolean: get train or test dataset
+        transform (callable, optional): Optional transform to be applied
+            on a sample.
+    """
 
     def __init__(self, path, train = True, patch_side = 96, stride = None, use_all_bands = False, transform=None, img_type = 0, normalize = True):
-        """
-        Args:
-            path (string): Path to the OSCD dataset directory
-            train (boolean: get train or test dataset
-            transform (callable, optional): Optional transform to be applied
-                on a sample.
-        """
+
         
         # basics
         self.transform = transform
