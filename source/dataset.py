@@ -52,7 +52,7 @@ class CDDataset(Dataset):
         self.patch_coords = []
         for im_name in tqdm(self.names):
             # load and store each image
-            I1, I2, cm = read_sentinel_img_trio(self.path + im_name, img_type, normalize)
+            I1, I2, cm = read_sentinel_img_trio(os.path.join(self.path, im_name), img_type, normalize)
             self.imgs_1[im_name] = reshape_for_torch(I1)
             self.imgs_2[im_name] = reshape_for_torch(I2)
             self.change_maps[im_name] = cm
