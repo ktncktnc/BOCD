@@ -64,7 +64,7 @@ def read_sentinel_img_leq20(path, NORMALISE_IMGS = True):
     ir1 = adjust_shape(zoom(io.imread(os.path.join(path_img_name, "B05.tif")),2),s)
     ir2 = adjust_shape(zoom(io.imread(os.path.join(path_img_name, "B06.tif")),2),s)
     ir3 = adjust_shape(zoom(io.imread(os.path.join(path_img_name, "B07.tif")),2),s)
-    nir2 = adjust_shape(zoom(io.imread(os.path.join(path_img_name "B8A.tif")),2),s)
+    nir2 = adjust_shape(zoom(io.imread(os.path.join(path_img_name, "B8A.tif")),2),s)
     swir2 = adjust_shape(zoom(io.imread(os.path.join(path_img_name, "B11.tif")),2),s)
     swir3 = adjust_shape(zoom(io.imread(os.path.join(path_img_name, "B12.tif")),2),s)
     
