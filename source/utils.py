@@ -194,3 +194,21 @@ def reshape_for_torch(I):
 #     out = out[np.newaxis,:]
     out = I.transpose((2, 0, 1))
     return torch.from_numpy(out)
+
+def resnet_state_dict_from_learner(path):
+    """Load resnet state dict from BYOL state dict"""
+    learner_state_dict = torch.load(path)
+    learner_state_dict = learner_state_dict["model_state_dict"]
+
+    resnet_state_dict = learner_state_dict.copy()
+
+    keys = learner_state_dict.keys()
+
+    for key in keys:
+        if not key.startswith('net'):
+            del resnet_state_dict[key]
+        else:
+            new_key = key[4:]
+            resnet_state_dict[new_key] = resnet_state_dict.pop(key)
+
+    return resnet_state_dict
