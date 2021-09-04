@@ -20,7 +20,7 @@ class CDDataset(Dataset):
             on a sample.
     """
 
-    def __init__(self, path, train = True, patch_side = 96, stride = None, use_all_bands = False, transform=None, img_type = 0, normalize = True):
+    def __init__(self, path, train = True, patch_side = 96, stride = None, use_all_bands = False, transform=None, img_type = 0, normalize = True, FP_MODIFIER = 10):
 
         
         # basics
@@ -80,7 +80,7 @@ class CDDataset(Dataset):
                                     [self.stride*(i + 1), self.stride*(j + 1)])
                     self.patch_coords.append(current_patch_coords)
                     
-        self.weights = [2 * true_pix / n_pix, 2 * (n_pix - true_pix) / n_pix]
+        self.weights = [FP_MODIFIER * 2 * true_pix / n_pix, 2 * (n_pix - true_pix) / n_pix]
         
         
 
