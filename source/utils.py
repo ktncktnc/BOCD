@@ -195,9 +195,9 @@ def reshape_for_torch(I):
     out = I.transpose((2, 0, 1))
     return torch.from_numpy(out)
 
-def resnet_state_dict_from_learner(path):
+def resnet_state_dict_from_learner(path, device = "cuda:0"):
     """Load resnet state dict from BYOL state dict"""
-    learner_state_dict = torch.load(path)
+    learner_state_dict = torch.load(path, map_location = device)
     learner_state_dict = learner_state_dict["model_state_dict"]
 
     resnet_state_dict = learner_state_dict.copy()
