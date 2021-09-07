@@ -128,7 +128,13 @@ class ResSiameseUnet(nn.Module):
             up_conv_out_channels=last_up_conv_out_channels)
         )
 
-        up_blocks.append(UpBlockForUNetWithResNet50(in_channels=int(last_up_conv_out_channels/2) + input_channels, out_channels=int(last_up_conv_out_channels/2), up_conv_in_channels=last_up_conv_out_channels, up_conv_out_channels=int(last_up_conv_out_channels/2))
+        up_blocks.append(UpBlockForUNetWithResNet50(
+            in_channels=int(last_up_conv_out_channels/2) + input_channels, 
+            out_channels=int(last_up_conv_out_channels/2), 
+            up_conv_in_channels=last_up_conv_out_channels, 
+            up_conv_out_channels=int(last_up_conv_out_channels/2)
+        )
+
         self.up_blocks = nn.ModuleList(up_blocks)
 
         self.out = nn.Conv2d(int(last_up_conv_out_channels/2), n_classes, kernel_size=1, stride=1)
