@@ -81,7 +81,7 @@ class ResSiameseUnet(nn.Module):
 
     DEPTH = 6
 
-    def __init__(self, n_classes = 2, resnet = None):
+    def __init__(self, n_classes = 2, resnet = None, input_channels = 3, last_up_conv_out_channels = 128):
         super().__init__()
 
         if resnet == None:
@@ -100,29 +100,38 @@ class ResSiameseUnet(nn.Module):
         ]))
 
         self.input_pool = list(resnet.children())[3]
+        self.encoded_out_channels = []
 
         for bottleneck in list(resnet.children()):
             if isinstance(bottleneck, nn.Sequential):
                 down_blocks.append(bottleneck)
+                
+                out_channel = getattr(bottleneck[-1], 'conv3', bottleneck[-1].conv2)
+                self.encoded_out_channels.append(out_channel.out_channels)
+
         self.down_blocks = nn.ModuleList(down_blocks)
 
-        fuse_blocks.append(Bridge(2048, 1024))
-        fuse_blocks.append(Bridge(1024, 512))
-        fuse_blocks.append(Bridge(512, 256))
-        fuse_blocks.append(Bridge(128, 64))
-        fuse_blocks.append(Bridge(6, 3))
+        for i in range(1, 4):
+            fuse_blocks.append(Bridge(self.encoded_out_channels[-(i + 1)], self.encoded_out_channels[-(i + 2)])))
+            up_blocks.append(Bridge(self.encoded_out_channels[-i], self.encoded_out_channels[-(i + 1)])))
+
+        fuse_blocks.append(Bridge(self.input_block.conv1.out_channels*2, self.input_block.conv1.out_channels))
+        fuse_blocks.append(Bridge(input_channels*2, input_channels))
         self.fuse_blocks = nn.ModuleList(fuse_blocks)
 
-        self.bridge = Bridge(4096, 2048)
+        self.bridge = Bridge(self.encoded_out_channels[-1]*2, self.encoded_out_channels[-1])
 
-        up_blocks.append(UpBlockForUNetWithResNet50(2048, 1024))
-        up_blocks.append(UpBlockForUNetWithResNet50(1024, 512))
-        up_blocks.append(UpBlockForUNetWithResNet50(512, 256))
-        up_blocks.append(UpBlockForUNetWithResNet50(in_channels=128 + 64, out_channels=128, up_conv_in_channels=256, up_conv_out_channels=128))
-        up_blocks.append(UpBlockForUNetWithResNet50(in_channels=64 + 3, out_channels=64, up_conv_in_channels=128, up_conv_out_channels=64))
+        up_blocks.append(UpBlockForUNetWithResNet50(
+            in_channels=last_up_conv_out_channels + self.input_block.conv1.out_channels, 
+            out_channels= last_up_conv_out_channels, 
+            up_conv_in_channels=self.encoded_out_channels[0], 
+            up_conv_out_channels=last_up_conv_out_channels)
+        )
+
+        up_blocks.append(UpBlockForUNetWithResNet50(in_channels=int(last_up_conv_out_channels/2) + input_channels, out_channels=int(last_up_conv_out_channels/2), up_conv_in_channels=last_up_conv_out_channels, up_conv_out_channels=int(last_up_conv_out_channels/2))
         self.up_blocks = nn.ModuleList(up_blocks)
 
-        self.out = nn.Conv2d(64, n_classes, kernel_size=1, stride=1)
+        self.out = nn.Conv2d(int(last_up_conv_out_channels/2), n_classes, kernel_size=1, stride=1)
 
     
     def encode(self, x):
