@@ -112,8 +112,8 @@ class ResSiameseUnet(nn.Module):
         self.down_blocks = nn.ModuleList(down_blocks)
 
         for i in range(1, 4):
-            fuse_blocks.append(Bridge(self.encoded_out_channels[-(i + 1)], self.encoded_out_channels[-(i + 2)]))
-            up_blocks.append(Bridge(self.encoded_out_channels[-i], self.encoded_out_channels[-(i + 1)]))
+            fuse_blocks.append(Bridge(self.encoded_out_channels[-(i + 1)]*2, self.encoded_out_channels[-(i + 1)]))
+            up_blocks.append(UpBlockForUNetWithResNet50(self.encoded_out_channels[-i], self.encoded_out_channels[-(i + 1)]))
 
         fuse_blocks.append(Bridge(self.input_block.conv1.out_channels*2, self.input_block.conv1.out_channels))
         fuse_blocks.append(Bridge(input_channels*2, input_channels))
@@ -133,7 +133,7 @@ class ResSiameseUnet(nn.Module):
             out_channels=int(last_up_conv_out_channels/2), 
             up_conv_in_channels=last_up_conv_out_channels, 
             up_conv_out_channels=int(last_up_conv_out_channels/2)
-        )
+        ))
 
         self.up_blocks = nn.ModuleList(up_blocks)
 
@@ -195,10 +195,10 @@ class ResSiameseUnet(nn.Module):
         x = torch.cat([x, y], 1)
 
         x = self.bridge(x)
-        
+
         pools = self.fuse_pools(pools_x, pools_y)
 
-        x = self.decode_siamese(x, pools)
+        x = self.decode_siamese(f = x, pools = pools)
         
         output_feature_map = x
         x = self.out(x)
