@@ -112,8 +112,8 @@ class ResSiameseUnet(nn.Module):
         self.down_blocks = nn.ModuleList(down_blocks)
 
         for i in range(1, 4):
-            fuse_blocks.append(Bridge(self.encoded_out_channels[-(i + 1)], self.encoded_out_channels[-(i + 2)])))
-            up_blocks.append(Bridge(self.encoded_out_channels[-i], self.encoded_out_channels[-(i + 1)])))
+            fuse_blocks.append(Bridge(self.encoded_out_channels[-(i + 1)], self.encoded_out_channels[-(i + 2)]))
+            up_blocks.append(Bridge(self.encoded_out_channels[-i], self.encoded_out_channels[-(i + 1)]))
 
         fuse_blocks.append(Bridge(self.input_block.conv1.out_channels*2, self.input_block.conv1.out_channels))
         fuse_blocks.append(Bridge(input_channels*2, input_channels))
