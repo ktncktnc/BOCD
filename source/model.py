@@ -45,8 +45,10 @@ class UpBlockForUNetWithResNet50(nn.Module):
     """
 
     def __init__(self, in_channels, out_channels, up_conv_in_channels=None, up_conv_out_channels=None,
-                 upsampling_method="conv_transpose"):
+                 upsampling_method="conv_transpose", with_down_x = True):
         super().__init__()
+
+        self.with_down_x = with_down_x
 
         if up_conv_in_channels == None:
             up_conv_in_channels = in_channels
@@ -71,7 +73,9 @@ class UpBlockForUNetWithResNet50(nn.Module):
         """
         x = self.upsample(up_x)
 
-        x = torch.cat([x, down_x], 1)
+        if self.with_down_x:
+            x = torch.cat([x, down_x], 1)
+
         x = self.conv_block_1(x)
         x = self.conv_block_2(x)
         return x
@@ -129,15 +133,16 @@ class ResSiameseUnet(nn.Module):
         )
 
         up_blocks.append(UpBlockForUNetWithResNet50(
-            in_channels=int(last_up_conv_out_channels/2) + input_channels, 
-            out_channels=int(last_up_conv_out_channels/2), 
+            in_channels=int(last_up_conv_out_channels/2), 
+            out_channels=int(last_up_conv_out_channels/4), 
             up_conv_in_channels=last_up_conv_out_channels, 
-            up_conv_out_channels=int(last_up_conv_out_channels/2)
+            up_conv_out_channels=int(last_up_conv_out_channels/2),
+            with_down_x=False
         ))
 
         self.up_blocks = nn.ModuleList(up_blocks)
 
-        self.out = nn.Conv2d(int(last_up_conv_out_channels/2), n_classes, kernel_size=1, stride=1)
+        self.out = nn.Conv2d(int(last_up_conv_out_channels/4), n_classes, kernel_size=1, stride=1)
 
     
     def encode(self, x):
