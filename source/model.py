@@ -97,6 +97,10 @@ class ResSiameseUnet(nn.Module):
 
         #Encode block using resnet50
         input_blocks = list(resnet.children())[:3]
+
+        if input_blocks[0].in_channels != input_channels:
+            input_blocks[0] = nn.Conv2d(input_channels, 64, padding=3, kernel_size=7, stride=2)
+            
         self.input_block = nn.Sequential(OrderedDict([
           ('conv1', input_blocks[0]),
           ('bn1', input_blocks[1]),
