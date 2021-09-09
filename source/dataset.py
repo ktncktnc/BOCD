@@ -20,7 +20,7 @@ class CDDataset(Dataset):
             on a sample.
     """
 
-    def __init__(self, path, train = True, patch_side = 96, stride = None, use_all_bands = False, transform=None, img_type = 0, normalize = True, FP_MODIFIER = 10):
+    def __init__(self, path, train = True, patch_side = 96, stride = None, transform=None, img_type = 0, normalize = True, FP_MODIFIER = 10):
 
         
         # basics
@@ -85,7 +85,11 @@ class CDDataset(Dataset):
         
 
     def get_img(self, im_name):
-        return self.imgs_1[im_name], self.imgs_2[im_name], self.change_maps[im_name]
+        return {
+            'I1': self.imgs_1[im_name], 
+            'I2': self.imgs_2[im_name], 
+            'label': self.change_maps[im_name]
+        }
 
     def __len__(self):
         return self.n_patches
