@@ -187,8 +187,8 @@ class ResSiameseUnet(nn.Module):
         for i, block in enumerate(self.fuse_blocks, 1):
             key = f"layer_{ResSiameseUnet.DEPTH - 1 - i}"
 
-            f = torch.cat([pools_x[key], pools_y[key]], 1)
-            f = block(f)
+            f = torch.abs(pools_x[key] -  pools_y[key])
+            #f = block(f)
 
             pools[key] = f
         
