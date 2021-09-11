@@ -72,16 +72,15 @@ class UpBlockForUNetWithResNet50(nn.Module):
         :param down_x: this is the output from the down block
         :return: upsampled feature map
         """
-        up_x = self.upsample(up_x)
+        x = self.upsample(up_x)
 
-        diffY = down_x.size()[-2] - up_x.size()[-2]
-        diffX = down_x.size()[-1] - up_x.size()[-1]
-
-        up_x = F.pad(up_x, [diffX // 2, diffX - diffX // 2,
-                        diffY // 2, diffY - diffY // 2])
+        diffY = down_x.size()[-2] - x.size()[-2]
+        diffX = down_x.size()[-1] - x.size()[-1]
 
         if self.with_down_x:
-            x = torch.cat([up_x, down_x], 1)
+            x = F.pad(x, [diffX // 2, diffX - diffX // 2,
+                diffY // 2, diffY - diffY // 2])
+            x = torch.cat([x, down_x], 1)
 
         x = self.conv_block_1(x)
         x = self.conv_block_2(x)
