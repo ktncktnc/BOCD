@@ -109,7 +109,7 @@ def read_sentinel_img_leq20(path, NORMALISE_IMGS = True):
 
 def read_sentinel_img_leq60(path, NORMALISE_IMGS = True):
     """Read cropped Sentinel-2 image: all bands."""
-    im_name = os.listdir(path)[0][:-7]
+    im_name = os.listdir(path)[0][:-7]  
 
     r = read_img(path, im_name + "B04.tif")
     g = read_img(path, im_name + "B03.tif")
