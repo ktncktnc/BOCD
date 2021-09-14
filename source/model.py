@@ -77,10 +77,9 @@ class UpBlockForUNetWithResNet50(nn.Module):
         diffY = down_x.size()[-2] - x.size()[-2]
         diffX = down_x.size()[-1] - x.size()[-1]
 
-        if self.with_down_x:
-            x = F.pad(x, [diffX // 2, diffX - diffX // 2,
-                diffY // 2, diffY - diffY // 2])
-            x = torch.cat([x, down_x], 1)
+        x = F.pad(x, [diffX // 2, diffX - diffX // 2,
+            diffY // 2, diffY - diffY // 2])
+        x = torch.cat([x, down_x], 1)
 
         x = self.conv_block_1(x)
         x = self.conv_block_2(x)
@@ -146,8 +145,7 @@ class ResSiameseUnet(nn.Module):
             in_channels=int(last_up_conv_out_channels/2), 
             out_channels=int(last_up_conv_out_channels/4), 
             up_conv_in_channels=last_up_conv_out_channels, 
-            up_conv_out_channels=int(last_up_conv_out_channels/2),
-            with_down_x=False
+            up_conv_out_channels=int(last_up_conv_out_channels/2)
         ))
 
         self.up_blocks = nn.ModuleList(up_blocks)
