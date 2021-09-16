@@ -147,7 +147,7 @@ class ResSiameseUnet(nn.Module):
             in_channels=last_up_conv_out_channels + self.input_block.conv1.out_channels, 
             out_channels= last_up_conv_out_channels, 
             up_conv_in_channels=self.encoded_out_channels[0], 
-            up_conv_out_channels=last_up_conv_out_channels),
+            up_conv_out_channels=last_up_conv_out_channels,
             is_dropout = is_dropout
         )
 
