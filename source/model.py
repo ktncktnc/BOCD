@@ -149,7 +149,7 @@ class ResSiameseUnet(nn.Module):
             up_conv_in_channels=self.encoded_out_channels[0], 
             up_conv_out_channels=last_up_conv_out_channels,
             is_dropout = is_dropout
-        )
+        ))
 
         up_blocks.append(UpBlockForUNetWithResNet50(
             in_channels=int(last_up_conv_out_channels/2 + input_channels), 
