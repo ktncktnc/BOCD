@@ -9,18 +9,27 @@ class ConvBlock(nn.Module):
     Helper module that consists of a Conv -> BN -> ReLU
     """
 
-    def __init__(self, in_channels, out_channels, padding=1, kernel_size=3, stride=1, with_nonlinearity=True):
+    def __init__(self, in_channels, out_channels, padding=1, kernel_size=3, stride=1, with_nonlinearity=True, is_dropout = False):
         super().__init__()
+
+        self.is_dropout = is_dropout
+
         self.conv = nn.Conv2d(in_channels, out_channels, padding=padding, kernel_size=kernel_size, stride=stride)
         self.bn = nn.BatchNorm2d(out_channels)
         self.relu = nn.ReLU()
         self.with_nonlinearity = with_nonlinearity
+        if is_dropout:
+            self.dropout = nn.Dropout(p = 0.2)
 
     def forward(self, x):
         x = self.conv(x)
         x = self.bn(x)
         if self.with_nonlinearity:
             x = self.relu(x)
+        
+        if self.is_dropout:
+            x = self.dropout(x)
+
         return x
 
 
@@ -29,11 +38,11 @@ class Bridge(nn.Module):
     This is the middle layer of the UNet which just consists of some
     """
 
-    def __init__(self, in_channels, out_channels):
+    def __init__(self, in_channels, out_channels, is_dropout = False):
         super().__init__()
         self.bridge = nn.Sequential(
-            ConvBlock(in_channels, out_channels),
-            ConvBlock(out_channels, out_channels)
+            ConvBlock(in_channels, out_channels, is_dropout = is_dropout),
+            ConvBlock(out_channels, out_channels, is_dropout = is_dropout)
         )
 
     def forward(self, x):
@@ -46,7 +55,7 @@ class UpBlockForUNetWithResNet50(nn.Module):
     """
 
     def __init__(self, in_channels, out_channels, up_conv_in_channels=None, up_conv_out_channels=None,
-                 upsampling_method="conv_transpose", with_down_x = True):
+                 upsampling_method="conv_transpose", with_down_x = True, is_dropout = False):
         super().__init__()
 
         self.with_down_x = with_down_x
@@ -61,10 +70,10 @@ class UpBlockForUNetWithResNet50(nn.Module):
         elif upsampling_method == "bilinear":
             self.upsample = nn.Sequential(
                 nn.Upsample(mode='bilinear', scale_factor=2),
-                nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=1)
+                nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=1, is_dropout = is_dropout)
             )
-        self.conv_block_1 = ConvBlock(in_channels, out_channels)
-        self.conv_block_2 = ConvBlock(out_channels, out_channels)
+        self.conv_block_1 = ConvBlock(in_channels, out_channels, is_dropout = is_dropout)
+        self.conv_block_2 = ConvBlock(out_channels, out_channels, is_dropout = is_dropout)
 
     def forward(self, up_x, down_x):
         """
@@ -90,7 +99,7 @@ class ResSiameseUnet(nn.Module):
 
     DEPTH = 6
 
-    def __init__(self, n_classes = 2, resnet = None, input_channels = 3, last_up_conv_out_channels = 128):
+    def __init__(self, n_classes = 2, resnet = None, input_channels = 3, last_up_conv_out_channels = 128, is_dropout = False):
         super().__init__()
 
         if resnet == None:
@@ -125,27 +134,29 @@ class ResSiameseUnet(nn.Module):
         self.down_blocks = nn.ModuleList(down_blocks)
 
         for i in range(1, 4):
-            fuse_blocks.append(Bridge(self.encoded_out_channels[-(i + 1)]*2, self.encoded_out_channels[-(i + 1)]))
-            up_blocks.append(UpBlockForUNetWithResNet50(self.encoded_out_channels[-i], self.encoded_out_channels[-(i + 1)]))
+            fuse_blocks.append(Bridge(self.encoded_out_channels[-(i + 1)]*2, self.encoded_out_channels[-(i + 1)], is_dropout = is_dropout))
+            up_blocks.append(UpBlockForUNetWithResNet50(self.encoded_out_channels[-i], self.encoded_out_channels[-(i + 1)], is_dropout = is_dropout))
 
-        fuse_blocks.append(Bridge(self.input_block.conv1.out_channels*2, self.input_block.conv1.out_channels))
-        fuse_blocks.append(Bridge(input_channels*2, input_channels))
+        fuse_blocks.append(Bridge(self.input_block.conv1.out_channels*2, self.input_block.conv1.out_channels, is_dropout = is_dropout))
+        fuse_blocks.append(Bridge(input_channels*2, input_channels, is_dropout = is_dropout))
         self.fuse_blocks = nn.ModuleList(fuse_blocks)
 
-        self.bridge = Bridge(self.encoded_out_channels[-1]*2, self.encoded_out_channels[-1])
+        self.bridge = Bridge(self.encoded_out_channels[-1]*2, self.encoded_out_channels[-1], is_dropout = is_dropout)
 
         up_blocks.append(UpBlockForUNetWithResNet50(
             in_channels=last_up_conv_out_channels + self.input_block.conv1.out_channels, 
             out_channels= last_up_conv_out_channels, 
             up_conv_in_channels=self.encoded_out_channels[0], 
-            up_conv_out_channels=last_up_conv_out_channels)
+            up_conv_out_channels=last_up_conv_out_channels),
+            is_dropout = is_dropout
         )
 
         up_blocks.append(UpBlockForUNetWithResNet50(
             in_channels=int(last_up_conv_out_channels/2 + input_channels), 
             out_channels=int(last_up_conv_out_channels/4), 
             up_conv_in_channels=last_up_conv_out_channels, 
-            up_conv_out_channels=int(last_up_conv_out_channels/2)
+            up_conv_out_channels=int(last_up_conv_out_channels/2),
+            is_dropout = is_dropout
         ))
 
         self.up_blocks = nn.ModuleList(up_blocks)
