@@ -169,8 +169,8 @@ class RandomCropCDDataset(Dataset):
             self.n_patches_per_image[im_name] = nums_crop_per_img
             self.n_patches += nums_crop_per_img
 
-            n1 = ceil(s[1] - self.patch_side + 1)
-            n2 = ceil(s[2] - self.patch_side + 1)
+            n1 = s[1] - self.patch_side
+            n2 = s[2] - self.patch_side
 
             for i in range(nums_crop_per_img):
                 n1_random = random.randint(0, n1)
