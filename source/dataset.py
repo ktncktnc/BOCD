@@ -104,7 +104,7 @@ class CDDataset(Dataset):
         I2 = self.imgs_2[im_name][:, limits[0]:limits[1], limits[2]:limits[3]]
         
         label = self.change_maps[im_name][limits[0]:limits[1], limits[2]:limits[3]]
-        label = 1*np.array(label)
+        label = torch.from_numpy(1*np.array(label)).float()
         
         sample = {'I1': I1, 'I2': I2, 'label': label}
         
@@ -227,7 +227,7 @@ class RandomCropCDDataset(Dataset):
         I2 = self.imgs_2[im_name][:, limits[0]:limits[1], limits[2]:limits[3]]
         
         label = self.change_maps[im_name][limits[0]:limits[1], limits[2]:limits[3]]
-        label = 1*np.array(label)
+        label = torch.from_numpy(1*np.array(label)).float()
         
         sample = {'I1': I1, 'I2': I2, 'label': label}
         
