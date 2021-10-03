@@ -178,6 +178,14 @@ def reshape_for_torch(I, to_tensor = True):
 
     return out
 
+def reshape_for_segment(I, to_tensor = True):
+    out = I.transpose((1, 2, 0))
+
+    if to_tensor:
+        out = torch.from_numpy(out)
+    
+    return out
+
 def resnet_state_dict_from_learner(path, device = "cuda:0"):
     """Load resnet state dict from BYOL state dict"""
     learner_state_dict = torch.load(path, map_location = device)

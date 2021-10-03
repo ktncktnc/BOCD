@@ -116,13 +116,13 @@ class CDDataset(Dataset):
     
     def augment(self, sample):
         if self.transform is not None:
-            x = sample['I1']
-            y = sample['I2']
+            x = reshape_for_segment(sample['I1'])
+            y = reshape_for_segment(sample['I2'])
             gt = sample['label']
 
-            num_channels = x.shape[0]
+            num_channels = x.shape[2]
 
-            image = np.concatenate((x, y), axis = 0)
+            image = np.concatenate((x, y), axis = 2)
             image = image.astype(int)
 
             transformed = self.transform(image = image, mask = gt)
@@ -131,6 +131,9 @@ class CDDataset(Dataset):
 
             x = image[:num_channels, :, :]
             y = image[num_channels:, :, :]
+
+            x = reshape_for_torch(x.numpy())
+            y = reshape_for_torch(y.numpy())
             
             return {'I1': x, 'I2': y, 'label': gt}
         
