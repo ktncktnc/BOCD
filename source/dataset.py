@@ -120,25 +120,19 @@ class CDDataset(Dataset):
             y = sample['I2']
             gt = sample['label']
 
-            num_channels = x.shape[1]
+            num_channels = x.shape[0]
 
-            print(x.shape)
-            print(y.shape)
-            print(gt.shape)
-            print(num_channels)
-
-            image = np.concatenate((x, y), axis = 1)
+            image = np.concatenate((x, y), axis = 0)
             transformed = self.transform(image = image, mask = gt)
 
             image, gt = transformed['image'], transformed['mask']
 
-            x = image[:, :num_channels, :, :]
-            y = image[:, num_channels:, :, :]
+            x = image[:num_channels, :, :]
+            y = image[num_channels:, :, :]
             
             return {'I1': x, 'I2': y, 'label': gt}
         
         return sample
-
 
 
 class RandomCropCDDataset(Dataset):
@@ -247,15 +241,15 @@ class RandomCropCDDataset(Dataset):
             y = sample['I2']
             gt = sample['label']
 
-            num_channels = x.shape[1]
+            num_channels = x.shape[0]
 
-            image = np.concatenate((x, y), axis = 1)
+            image = np.concatenate((x, y), axis = 0)
             transformed = self.transform(image = image, mask = gt)
 
             image, gt = transformed['image'], transformed['mask']
 
-            x = image[:, :num_channels, :, :]
-            y = image[:, num_channels:, :, :]
+            x = image[:num_channels, :, :]
+            y = image[num_channels:, :, :]
             
             return {'I1': x, 'I2': y, 'label': gt}
         
