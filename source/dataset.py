@@ -7,7 +7,7 @@ import torch
 from torch.utils.data import Dataset
 from math import floor, ceil, sqrt, exp
 import random
-import albumentations
+import albumentations 
 from albumentations.pytorch import ToTensorV2
 
 
@@ -104,7 +104,7 @@ class CDDataset(Dataset):
         I2 = self.imgs_2[im_name][:, limits[0]:limits[1], limits[2]:limits[3]]
         
         label = self.change_maps[im_name][limits[0]:limits[1], limits[2]:limits[3]]
-        label = torch.from_numpy(1*np.array(label)).float()
+        label = 1*np.array(label)
         
         sample = {'I1': I1, 'I2': I2, 'label': label}
         
@@ -122,7 +122,7 @@ class CDDataset(Dataset):
 
             num_channels = x.shape[1]
 
-            image = torch.cat((x, y), dim = 1)
+            image = np.concatenate((x, y), dim = 1)
             transformed = self.transform(image = image, mask = gt)
 
             image, gt = transformed['image'], transformed['mask']
@@ -226,7 +226,7 @@ class RandomCropCDDataset(Dataset):
         I2 = self.imgs_2[im_name][:, limits[0]:limits[1], limits[2]:limits[3]]
         
         label = self.change_maps[im_name][limits[0]:limits[1], limits[2]:limits[3]]
-        label = torch.from_numpy(1*np.array(label)).float()
+        label = 1*np.array(label)
         
         sample = {'I1': I1, 'I2': I2, 'label': label}
         
@@ -244,7 +244,7 @@ class RandomCropCDDataset(Dataset):
 
             num_channels = x.shape[1]
 
-            image = torch.cat((x, y), dim = 1)
+            image = np.concatenate((x, y), dim = 1)
             transformed = self.transform(image = image, mask = gt)
 
             image, gt = transformed['image'], transformed['mask']
