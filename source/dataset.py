@@ -123,9 +123,8 @@ class CDDataset(Dataset):
             num_channels = x.shape[0]
 
             image = np.concatenate((x, y), axis = 0)
+            image = image.astype(int)
 
-            print(image)
-            print(gt)
             transformed = self.transform(image = image, mask = gt)
 
             image, gt = transformed['image'], transformed['mask']
@@ -247,6 +246,8 @@ class RandomCropCDDataset(Dataset):
             num_channels = x.shape[0]
 
             image = np.concatenate((x, y), axis = 0)
+            image = image.astype(int)
+
             transformed = self.transform(image = image, mask = gt)
 
             image, gt = transformed['image'], transformed['mask']
