@@ -129,23 +129,6 @@ def read_sentinel_img_leq60(path, NORMALISE_IMGS = True):
     wv = read_img(path, im_name + "B09.tif", True, 6, True, s)
     swirc = read_img(path, im_name + "B10.tif", True, 6, True, s)
     
-    # r = io.imread(os.path.join(path_img_name, "B04.tif"))
-    # s = r.shape
-    # g = io.imread(os.path.join(path_img_name, "B03.tif"))
-    # b = io.imread(os.path.join(path_img_name, "B02.tif"))
-    # nir = io.imread(os.path.join(path_img_name, "B08.tif"))
-    
-    # ir1 = adjust_shape(zoom(io.imread(os.path.join(path_img_name, "B05.tif")),2),s)
-    # ir2 = adjust_shape(zoom(io.imread(os.path.join(path_img_name, "B06.tif")),2),s)
-    # ir3 = adjust_shape(zoom(io.imread(os.path.join(path_img_name, "B07.tif")),2),s)
-    # nir2 = adjust_shape(zoom(io.imread(os.path.join(path_img_name, "B8A.tif")),2),s)
-    # swir2 = adjust_shape(zoom(io.imread(os.path.join(path_img_name, "B11.tif")),2),s)
-    # swir3 = adjust_shape(zoom(io.imread(os.path.join(path_img_name, "B12.tif")),2),s)
-    
-    # uv = adjust_shape(zoom(io.imread(os.path.join(path_img_name, "B01.tif")),6),s)
-    # wv = adjust_shape(zoom(io.imread(os.path.join(path_img_name,"B09.tif")),6),s)
-    # swirc = adjust_shape(zoom(io.imread(os.path.join(path_img_name, "B10.tif")),6),s)
-    
     I = np.stack((r,g,b,nir,ir1,ir2,ir3,nir2,swir2,swir3,uv,wv,swirc),axis=2).astype('float')
     
     if NORMALISE_IMGS:
@@ -187,13 +170,13 @@ def read_sentinel_img_trio(path, img_type = 0, NORMALISE_IMGS = True):
 
 
 
-def reshape_for_torch(I):
+def reshape_for_torch(I, to_tensor = True):
     """Transpose image for PyTorch coordinates."""
-#     out = np.swapaxes(I,1,2)
-#     out = np.swapaxes(out,0,1)
-#     out = out[np.newaxis,:]
     out = I.transpose((2, 0, 1))
-    return torch.from_numpy(out)
+    if to_tensor:
+        out = torch.from_numpy(out)
+
+    return out
 
 def resnet_state_dict_from_learner(path, device = "cuda:0"):
     """Load resnet state dict from BYOL state dict"""
