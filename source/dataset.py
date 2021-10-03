@@ -109,32 +109,32 @@ class CDDataset(Dataset):
         sample = {'I1': I1, 'I2': I2, 'label': label}
         
         if self.transform:
-           sample = self.augment(sample)
+           sample = self.transform(sample)
 
         return sample
 
     
-    def augment(self, sample):
-        if self.transform is not None:
-            x = reshape_for_segment(sample['I1'])
-            y = reshape_for_segment(sample['I2'])
-            gt = sample['label']
+    # def augment(self, sample):
+    #     if self.transform is not None:
+    #         x = reshape_for_segment(sample['I1'])
+    #         y = reshape_for_segment(sample['I2'])
+    #         gt = sample['label']
 
-            num_channels = x.shape[2]
+    #         num_channels = x.shape[2]
 
-            image = np.concatenate((x, y), axis = 2)
-            image = image.astype(int)
+    #         image = np.concatenate((x, y), axis = 2)
+    #         image = image.astype(int)
 
-            transformed = self.transform(image = image, mask = gt)
+    #         transformed = self.transform(image = image, mask = gt)
 
-            image, gt = transformed['image'], transformed['mask']
+    #         image, gt = transformed['image'], transformed['mask']
 
-            x = image[:num_channels, :, :]
-            y = image[num_channels:, :, :]
+    #         x = image[:num_channels, :, :]
+    #         y = image[num_channels:, :, :]
             
-            return {'I1': x, 'I2': y, 'label': gt}
+    #         return {'I1': x, 'I2': y, 'label': gt}
         
-        return sample
+    #     return sample
 
 
 class RandomCropCDDataset(Dataset):
@@ -232,29 +232,29 @@ class RandomCropCDDataset(Dataset):
         sample = {'I1': I1, 'I2': I2, 'label': label}
         
         if self.transform:
-           sample = self.augment(sample)
+           sample = self.transform(sample)
 
         return sample
 
     
-    def augment(self, sample):
-        if self.transform is not None:
-            x = sample['I1']
-            y = sample['I2']
-            gt = sample['label']
+    # def augment(self, sample):
+    #     if self.transform is not None:
+    #         x = sample['I1']
+    #         y = sample['I2']
+    #         gt = sample['label']
 
-            num_channels = x.shape[0]
+    #         num_channels = x.shape[0]
 
-            image = np.concatenate((x, y), axis = 0)
-            image = image.astype(int)
+    #         image = np.concatenate((x, y), axis = 0)
+    #         image = image.astype(int)
 
-            transformed = self.transform(image = image, mask = gt)
+    #         transformed = self.transform(image = image, mask = gt)
 
-            image, gt = transformed['image'], transformed['mask']
+    #         image, gt = transformed['image'], transformed['mask']
 
-            x = image[:num_channels, :, :]
-            y = image[num_channels:, :, :]
+    #         x = image[:num_channels, :, :]
+    #         y = image[num_channels:, :, :]
             
-            return {'I1': x, 'I2': y, 'label': gt}
+    #         return {'I1': x, 'I2': y, 'label': gt}
         
-        return sample
+    #     return sample
