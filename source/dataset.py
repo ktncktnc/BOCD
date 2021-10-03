@@ -131,9 +131,6 @@ class CDDataset(Dataset):
 
             x = image[:num_channels, :, :]
             y = image[num_channels:, :, :]
-
-            x = reshape_for_torch(x.numpy())
-            y = reshape_for_torch(y.numpy())
             
             return {'I1': x, 'I2': y, 'label': gt}
         
