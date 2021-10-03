@@ -122,6 +122,11 @@ class CDDataset(Dataset):
 
             num_channels = x.shape[1]
 
+            print(x.shape)
+            print(y.shape)
+            print(gt.shape)
+            print(num_channels)
+
             image = np.concatenate((x, y), axis = 1)
             transformed = self.transform(image = image, mask = gt)
 
