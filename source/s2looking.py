@@ -4,7 +4,8 @@ from glob import glob
 from typing import Dict
 from math import ceil
 from PIL import Image
-from albumentations.pytorch import ToTensorV2
+from albumentations.pytorch import ToTensorV2ư
+from torchrs.transforms import Compose
 
 
 class S2Looking(torch.utils.data.Dataset):
