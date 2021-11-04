@@ -71,7 +71,7 @@ class S2Looking(torch.utils.data.Dataset):
         mask = np.array(Image.open(files["mask"]))
         mask = np.expand_dims(mask, axis=2)
 
-        transformed = self.transform(image = image1, image0 = image1, mask = mask)
+        transformed = self.transform(image = image1, image0 = image2, mask = mask)
         
         image1 = transformed['image']
         image2 = transformed['image0']
