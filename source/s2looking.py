@@ -4,7 +4,7 @@ from glob import glob
 from typing import Dict
 from math import ceil
 from PIL import Image
-from albumentations.pytorch import ToTensorV2ư
+from albumentations.pytorch import ToTensorV2
 from torchrs.transforms import Compose
 
 
