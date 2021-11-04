@@ -5,7 +5,7 @@ from typing import Dict
 from math import ceil
 from PIL import Image
 from albumentations.pytorch import ToTensorV2
-from torchrs.transforms import Compose
+from torchrs.transforms import Compose, ToTensor
 
 
 class S2Looking(torch.utils.data.Dataset):
