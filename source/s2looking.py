@@ -99,7 +99,13 @@ class CroppedS2Looking(torch.utils.data.Dataset):
         split: str = "train",
         stride: int = 256,
         patch_size: tuple = (256, 256),
-        transform: Compose = Compose([ToTensor()]),
+        transform: A.Compose = A.Compose([
+                A.Resize(256, 256),
+                A.RandomRotate90(),
+                A.RandomBrightnessContrast(brightness_limit=0.3, contrast_limit=0.3, p=0.5),
+                A.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
+                ToTensorV2()
+            ])
     ):
         #assert split in self.splits
         self.root = root
@@ -174,9 +180,11 @@ class CroppedS2Looking(torch.utils.data.Dataset):
         image1 = np.array(Image.open(files["image1"]))[limits[0]:limits[1], limits[2]:limits[3], :]
         image2 = np.array(Image.open(files["image2"]))[limits[0]:limits[1], limits[2]:limits[3], :]
 
-        image1 = self.transform(image1)
-        image2 = self.transform(image2)
-        mask = self.transform(mask)
+        transformed = self.transform(image = image1, image0 = image2, mask = mask)
+        
+        image1 = transformed['image']
+        image2 = transformed['image0']
+        mask = transformed['mask']
         
         x = torch.stack([image1, image2], dim=0)
         return dict(x=x, mask=mask)
