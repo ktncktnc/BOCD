@@ -3,7 +3,7 @@ from .parts import *
 
 class ResUnetSegmentation(nn.Module):
     def __init__(self, input_channels = 3, n_classes = 2, encoder_depth = 6):
-        super().__init__()
+        super(ResUnetSegmentation, self).__init__()
 
         self.input_channels = 3
         self.n_classes = 2
@@ -38,8 +38,8 @@ class ResUnetSegmentation(nn.Module):
 
         for i, block in enumerate(self.up_blocks, 1):
             key = f"layer_{self.encoder_depth - 1 - i}"
-            x = block(x, pre_pools[key])
+            out = block(out, pre_pools[key])
 
-        x = self.out(x)
+        out = self.out(out)
         del pre_pools
-        return x
+        return out

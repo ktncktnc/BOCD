@@ -87,6 +87,7 @@ class UpBlockForUNetWithResNet50(nn.Module):
 
 class UnetEncoder(nn.Module):
     def __init__(self, input_channels = 3, resnet = None, depth = 6, save_output = False): 
+        super(UnetEncoder, self).__init__()
         # Resnet
         if resnet == None:
             resnet = models.resnet50(pretrained=True)

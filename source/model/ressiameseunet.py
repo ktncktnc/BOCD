@@ -1,10 +1,8 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from torchvision import models
 from collections import OrderedDict
 from .parts import *
-
 
 class ResSiameseUnet(nn.Module):
     DEPTH = 6
